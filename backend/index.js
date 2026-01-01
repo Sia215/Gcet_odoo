@@ -24,7 +24,7 @@ app.use("/user",userRoute);
 
 
 
-connectMongoDB("mongodb://localhost:27017/project").then(() => {
+connectMongoDB("mongodb://localhost:27017/gcet").then(() => {
     console.log("connected");
 }).catch((err) => {
     console.log(err);
