@@ -1,6 +1,5 @@
 // backend/controllers/leaveController.js
 const Leave = require("../models/Leave");
-const User = require("../models/user");
 
 // Employee: apply for leave
 exports.applyLeave = async (req, res) => {
@@ -56,12 +55,12 @@ exports.getMyLeaves = async (req, res) => {
 // Admin: see all leaves
 exports.getAllLeaves = async (req, res) => {
   try {
-    const leaves = await Leave.find().populate("user", "email employeeId");
+    const leaves = await Leave.find().sort({ createdAt: -1 });
 
     return res.json(
       leaves.map((l) => ({
         id: l._id,
-        employee: l.user?.email || l.employeeId || "Unknown",
+        employee: l.employeeId, // just show employeeId
         type: l.type,
         status: l.status,
       }))

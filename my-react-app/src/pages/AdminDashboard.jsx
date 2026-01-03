@@ -6,14 +6,23 @@ import "./AdminDashboard.css";
 function AdminDashboard({ user, onLogout }) {
   const [employees, setEmployees] = useState([]);
   const [leaves, setLeaves] = useState([]);
+  const [message, setMessage] = useState("");
 
   const load = async () => {
-    const [empRes, leaveRes] = await Promise.all([
-      api.get("/employees"),
-      api.get("/leaves")
-    ]);
-    setEmployees(empRes.data || []);
-    setLeaves(leaveRes.data || []);
+    try {
+      const [empRes, leaveRes] = await Promise.all([
+        api.get("/employees"),
+        api.get("/leaves"), // admin endpoint -> getAllLeaves
+      ]);
+      setEmployees(empRes.data || []);
+      setLeaves(leaveRes.data || []);
+      setMessage("");
+    } catch (err) {
+      console.error(err);
+      setMessage(
+        err.response?.data?.message || "Failed to load admin data"
+      );
+    }
   };
 
   useEffect(() => {
@@ -21,19 +30,36 @@ function AdminDashboard({ user, onLogout }) {
   }, []);
 
   const approve = async (id) => {
-    await api.patch(`/leaves/${id}/approve`);
-    load();
+    try {
+      // backend route is POST /leaves/:id/approve
+      await api.post(`/leaves/${id}/approve`);
+      load();
+    } catch (err) {
+      console.error(err);
+      setMessage(
+        err.response?.data?.message || "Failed to approve leave"
+      );
+    }
   };
 
   const reject = async (id) => {
-    await api.patch(`/leaves/${id}/reject`);
-    load();
+    try {
+      // backend route is POST /leaves/:id/reject
+      await api.post(`/leaves/${id}/reject`);
+      load();
+    } catch (err) {
+      console.error(err);
+      setMessage(
+        err.response?.data?.message || "Failed to reject leave"
+      );
+    }
   };
 
   return (
     <Layout user={user} onLogout={onLogout} title="Admin / HR Dashboard">
       <div className="admin-root">
         <div className="admin-container">
+          {message && <p className="admin-message">{message}</p>}
           <div className="admin-grid">
             {/* Employees card */}
             <div className="admin-card">
