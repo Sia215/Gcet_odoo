@@ -33,5 +33,5 @@ connectMongoDB("mongodb://localhost:27017/gcet").then(() => {
 let port=7000;
 app.listen(port,()=>
 {
-    console.log(`server is running on the ${port}`);
+    console.log(`server is running ${port}`);
 })
