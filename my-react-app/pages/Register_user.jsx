@@ -1,60 +1,34 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import axios from "../api/axios";
 
 const Register_user = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [pass, setPass] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", password: "", employeeId: "", role: "EMPLOYEE" });
 
-  async function collectData(e) {
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const userData = { name, email, pass };
-    console.log(userData);
-
     try {
-      const res = await fetch("http://localhost:7000/user/register", {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-
-      const data = await res.json();
-      console.log("Response from backend:", data);
-      alert(data.message);
-
-    } catch (error) {
-      console.log(error);
-      alert("Something went wrong!");
+      await axios.post("/auth/signup", form);
+      alert("Registered successfully");
+    } catch (err) {
+      alert("Registration failed");
     }
-  }
+  };
 
   return (
-    <div>
-      <form onSubmit={collectData} className="bg-amber-500">
-        <input
-          type="text"
-          className="bg-amber-50"
-          placeholder="Enter name"
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <input
-          type="text"
-          className="bg-amber-600"
-          placeholder="Enter email please!"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
-          className='bg-blue-300'
-          placeholder="Enter password"
-          onChange={(e) => setPass(e.target.value)}
-        />
-
-        <button type="submit" className="bg-blue-700">
-          Submit
-        </button>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-96 space-y-4">
+        <h2 className="text-xl font-bold text-center">Register</h2>
+        <input name="employeeId" placeholder="Employee ID" className="w-full p-2 border rounded" onChange={handleChange} />
+        <input name="name" placeholder="Name" className="w-full p-2 border rounded" onChange={handleChange} />
+        <input name="email" placeholder="Email" className="w-full p-2 border rounded" onChange={handleChange} />
+        <input name="password" type="password" placeholder="Password" className="w-full p-2 border rounded" onChange={handleChange} />
+        <select name="role" className="w-full p-2 border rounded" onChange={handleChange}>
+          <option value="EMPLOYEE">Employee</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Register</button>
       </form>
     </div>
   );

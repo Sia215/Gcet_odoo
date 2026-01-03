@@ -1,37 +1,42 @@
-const express=require("express");
-const {connectMongoDB}=require("./connection");
+require("dotenv").config(); // Load environment variables
+
+const express = require("express");
+const { connectMongoDB } = require("./connection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const userRoute=require("./routes/user");
 
+// Import all route files
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const leaveRoutes = require("./routes/leaveRoutes");
+const payrollRoutes = require("./routes/payrollRoutes");
 
-const  app=express();
+const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cors({
-    origin: "http://localhost:5173", // ⚠️ change to your frontend URL
-    credentials: true
+  origin: "http://localhost:5173", // Update if frontend URL changes
+  credentials: true
 }));
-
 app.use(cookieParser());
 
+// Mount routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leaves", leaveRoutes);
+app.use("/api/payroll", payrollRoutes);
 
-app.use("/user",userRoute);
+// Connect to MongoDB
+connectMongoDB(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log("MongoDB Error:", err.message));
 
-
-
-
-
-connectMongoDB("mongodb://localhost:27017/gcet").then(() => {
-    console.log("connected");
-}).catch((err) => {
-    console.log(err);
+// Start server
+const port = process.env.PORT || 7000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
-
-let port=7000;
-app.listen(port,()=>
-{
-    console.log(`server is running ${port}`);
-})

@@ -1,21 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import {BrowserRouter,Routes,Route} from "react-router-dom"
-import Register_user from '../pages/Register_user'
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './App.css';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+
+// Import all your pages
+import Register_user from '../pages/Register_user';
+import Login from '../pages/Login';
+import Profile from '../pages/Profile';
+import Attendance from '../pages/Attendance';
+import Leave from '../pages/Leave';
+import Payroll from '../pages/Payroll';
+import AdminDashboard from '../pages/AdminDashboard';
+import EmployeeDashboard from '../pages/EmployeeDashboard';
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
       <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<Register_user/>} />
-          </Routes>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register_user />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/leave" element={<Leave />} />
+          <Route path="/payroll" element={<Payroll />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/employee" element={<EmployeeDashboard />} />
+        </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
