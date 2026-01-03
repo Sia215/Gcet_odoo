@@ -1,11 +1,21 @@
+const User = require("../models/user");
+
 exports.getEmployees = async (req, res) => {
-  // later you can connect to Employee model
-  return res.json([
-    { id: 1, name: "John Doe", role: "Developer" },
-    { id: 2, name: "Jane Smith", role: "Designer" }
-  ]);
+  try {
+    const users = await User.find().select("employeeId email role").lean();
+    return res.json(
+      users.map((u) => ({
+        id: u.employeeId,
+        name: u.email,
+        role: u.role
+      }))
+    );
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 };
 
 exports.createEmployee = async (req, res) => {
-  return res.status(201).json({ message: "Employee created (dummy)" });
+  // optional: for now just echo
+  return res.status(201).json({ message: "Implement create employee later" });
 };

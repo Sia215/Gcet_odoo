@@ -1,40 +1,47 @@
 import { Link } from "react-router-dom";
+import "./Layout.css";
 
 function Layout({ user, onLogout, title, children }) {
   return (
-    <div className="min-h-screen flex">
-      <aside className="w-64 bg-slate-900 text-white p-4 space-y-4">
-        <h2 className="text-xl font-semibold mb-4">HRMS</h2>
-        <nav className="space-y-2 text-sm">
-          <Link to="/" className="block hover:text-indigo-300">
-            Employee Dashboard
-          </Link>
-          <Link to="/attendance" className="block hover:text-indigo-300">
-            Attendance
-          </Link>
-          <Link to="/leave" className="block hover:text-indigo-300">
-            Leave / Time Off
-          </Link>
-          <Link to="/payroll" className="block hover:text-indigo-300">
-            Payroll
-          </Link>
-          {user?.role === "ADMIN" && (
-            <Link to="/admin" className="block hover:text-indigo-300">
-              Admin Dashboard
-            </Link>
-          )}
-        </nav>
-        <div className="mt-6 text-xs text-slate-300">
-          Logged in as: {user?.email} ({user?.role})
+    <div className="layout-root">
+      <header className="layout-header">
+        <div className="layout-header-left">
+          <div className="layout-brand">HRMS</div>
+          <nav className="layout-top-nav">
+            <Link to="/">Employee Dashboard</Link>
+            <Link to="/attendance">Attendance</Link>
+            <Link to="/leave">Leave / Time Off</Link>
+            <Link to="/payroll">Payroll</Link>
+            {user?.role === "ADMIN" && <Link to="/admin">Admin Dashboard</Link>}
+          </nav>
         </div>
-        <button onClick={onLogout} className="btn mt-4 w-full">
-          Logout
-        </button>
-      </aside>
-      <main className="flex-1 p-6 bg-slate-100">
-        <h1 className="text-2xl font-semibold mb-4">{title}</h1>
-        {children}
-      </main>
+        <div className="layout-header-right">
+          <div>Logged in as: {user?.email} ({user?.role})</div>
+          <button
+            onClick={onLogout}
+            style={{
+              marginLeft: 8,
+              padding: "4px 8px",
+              borderRadius: 999,
+              border: "none",
+              background: "#ef4444",
+              color: "#f9fafb",
+              fontSize: 11,
+              cursor: "pointer"
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <div className="layout-body">
+        {/* no sidebar now; main content full width */}
+        <main className="layout-main">
+          <h1 className="layout-title">{title}</h1>
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

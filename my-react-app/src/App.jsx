@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-
 import api from "./api";
 
 import LoginPage from "./pages/LoginPage";
@@ -62,7 +60,6 @@ function App() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/attendance"
         element={
@@ -71,7 +68,6 @@ function App() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/leave"
         element={
@@ -80,7 +76,6 @@ function App() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/payroll"
         element={
@@ -89,7 +84,6 @@ function App() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin"
         element={

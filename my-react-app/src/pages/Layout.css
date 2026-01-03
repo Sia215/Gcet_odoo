@@ -1,0 +1,77 @@
+.layout-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #020617;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* top header */
+
+.layout-header {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid #111827;
+  background: #020617;
+}
+
+.layout-header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.layout-brand {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.layout-top-nav {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.layout-top-nav a {
+  color: #cbd5f5;
+  text-decoration: none;
+}
+
+.layout-top-nav a:hover {
+  color: #6366f1;
+}
+
+.layout-header-right {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* body (sidebar + main) */
+
+.layout-body {
+  flex: 1;
+  display: flex;
+}
+
+.layout-sidebar {
+  width: 0; /* hide extra sidebar if you only want top nav */
+  display: none;
+}
+
+.layout-main {
+  flex: 1;
+  padding: 24px 28px;
+}
+
+.layout-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #f9fafb;
+}

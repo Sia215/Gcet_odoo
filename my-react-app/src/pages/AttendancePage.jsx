@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import api from "../api";
+import "./AttendancePage.css";
 
 function AttendancePage({ user, onLogout }) {
   const [rows, setRows] = useState([]);
@@ -23,27 +24,34 @@ function AttendancePage({ user, onLogout }) {
 
   return (
     <Layout user={user} onLogout={onLogout} title="Attendance">
-      <button onClick={mark} className="btn mb-4">
-        Check-in / Check-out
-      </button>
-      {message && <p className="text-sm mb-2 text-green-600">{message}</p>}
-      <div className="card overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 text-left">Date</th>
-              <th className="py-2 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r, i) => (
-              <tr key={i} className="border-b">
-                <td className="py-1">{r.date}</td>
-                <td className="py-1">{r.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="att-root">
+        <div className="att-container">
+          <div className="att-actions">
+            <button onClick={mark} className="att-button">
+              Check-in / Check-out
+            </button>
+            {message && <p className="att-message">{message}</p>}
+          </div>
+
+          <div className="att-card">
+            <table className="att-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r, i) => (
+                  <tr key={i}>
+                    <td>{r.date}</td>
+                    <td>{r.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </Layout>
   );
