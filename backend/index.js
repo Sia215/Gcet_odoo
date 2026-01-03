@@ -1,16 +1,18 @@
-require("dotenv").config(); // Load environment variables
+import dotenv from "dotenv";
+dotenv.config(); // Load environment variables
 
-const express = require("express");
-const { connectMongoDB } = require("./connection");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
-// Import all route files
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
-const attendanceRoutes = require("./routes/attendanceRoutes");
-const leaveRoutes = require("./routes/leaveRoutes");
-const payrollRoutes = require("./routes/payrollRoutes");
+import { connectMongoDB } from "./connection.js";
+
+// Import all route files (make sure these files use `export default router`)
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+import leaveRoutes from "./routes/leaveRoutes.js";
+import payrollRoutes from "./routes/payrollRoutes.js";
 
 const app = express();
 
