@@ -8,23 +8,8 @@ router.post("/", protect, leaveController.applyLeave);
 router.get("/me", protect, leaveController.getMyLeaves);
 
 // admin
-router.get(
-  "/",
-  protect,
-  allowRoles("ADMIN"),
-  leaveController.getAllLeaves
-);
-router.patch(
-  "/:id/approve",
-  protect,
-  allowRoles("ADMIN"),
-  leaveController.approveLeave
-);
-router.patch(
-  "/:id/reject",
-  protect,
-  allowRoles("ADMIN"),
-  leaveController.rejectLeave
-);
+router.get("/", protect, allowRoles("ADMIN"), leaveController.getAllLeaves);
+router.post("/:id/approve", protect, allowRoles("ADMIN"), leaveController.approveLeave);
+router.post("/:id/reject", protect, allowRoles("ADMIN"), leaveController.rejectLeave);
 
 module.exports = router;

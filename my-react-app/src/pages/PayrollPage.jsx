@@ -5,9 +5,21 @@ import "./PayrollPage.css";
 
 function PayrollPage({ user, onLogout }) {
   const [payroll, setPayroll] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    api.get("/payroll/me").then((res) => setPayroll(res.data));
+    const load = async () => {
+      try {
+        const res = await api.get("/payroll/me");
+        setPayroll(res.data);
+      } catch (err) {
+        console.error(err);
+        setMessage(
+          err.response?.data?.message || "Failed to load payroll info"
+        );
+      }
+    };
+    load();
   }, []);
 
   return (
@@ -26,33 +38,39 @@ function PayrollPage({ user, onLogout }) {
               </div>
             </div>
 
+            {message && <p className="pay-message">{message}</p>}
+
             {payroll ? (
-              <>
-                <div className="pay-section">
-                  <div className="pay-row">
-                    <span className="pay-label">Month</span>
-                    <span className="pay-value">{payroll.month}</span>
+              payroll.month === "N/A" ? (
+                <p>No payroll data yet.</p>
+              ) : (
+                <>
+                  <div className="pay-section">
+                    <div className="pay-row">
+                      <span className="pay-label">Month</span>
+                      <span className="pay-value">{payroll.month}</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="pay-section">
-                  <div className="pay-row">
-                    <span className="pay-label">Basic salary</span>
-                    <span className="pay-value">₹{payroll.basic}</span>
+                  <div className="pay-section">
+                    <div className="pay-row">
+                      <span className="pay-label">Basic salary</span>
+                      <span className="pay-value">₹{payroll.basic}</span>
+                    </div>
+                    <div className="pay-row">
+                      <span className="pay-label">Allowances</span>
+                      <span className="pay-value">₹0</span>
+                    </div>
                   </div>
-                  <div className="pay-row">
-                    <span className="pay-label">Allowances</span>
-                    <span className="pay-value">₹0</span>
-                  </div>
-                </div>
 
-                <div className="pay-section pay-total">
-                  <div className="pay-row">
-                    <span className="pay-label">Net pay</span>
-                    <span className="pay-value">₹{payroll.net}</span>
+                  <div className="pay-section pay-total">
+                    <div className="pay-row">
+                      <span className="pay-label">Net pay</span>
+                      <span className="pay-value">₹{payroll.net}</span>
+                    </div>
                   </div>
-                </div>
-              </>
+                </>
+              )
             ) : (
               <p>Loading payroll info...</p>
             )}

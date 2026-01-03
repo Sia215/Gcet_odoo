@@ -9,12 +9,20 @@ function LeavePage({ user, onLogout }) {
     type: "Paid",
     from: "",
     to: "",
-    remarks: ""
+    remarks: "",
   });
+  const [message, setMessage] = useState("");
 
   const load = async () => {
-    const res = await api.get("/leaves/me");
-    setList(res.data || []);
+    try {
+      const res = await api.get("/leaves/me");
+      setList(res.data || []);
+    } catch (err) {
+      console.error(err);
+      setMessage(
+        err.response?.data?.message || "Failed to load your leaves"
+      );
+    }
   };
 
   useEffect(() => {
@@ -26,9 +34,18 @@ function LeavePage({ user, onLogout }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    await api.post("/leaves", form);
-    setForm({ type: "Paid", from: "", to: "", remarks: "" });
-    load();
+    setMessage("");
+    try {
+      await api.post("/leaves", form);
+      setForm({ type: "Paid", from: "", to: "", remarks: "" });
+      setMessage("Leave submitted");
+      load();
+    } catch (err) {
+      console.error(err);
+      setMessage(
+        err.response?.data?.message || "Failed to submit leave"
+      );
+    }
   };
 
   return (
@@ -38,6 +55,7 @@ function LeavePage({ user, onLogout }) {
           {/* Apply for leave */}
           <div className="leave-card">
             <h2>Apply for Leave</h2>
+            {message && <p className="leave-message">{message}</p>}
             <form className="leave-form" onSubmit={submit}>
               <div className="leave-group">
                 <label>Leave type</label>
