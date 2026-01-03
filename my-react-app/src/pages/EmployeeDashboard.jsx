@@ -1,10 +1,20 @@
-const EmployeeDashboard = () => {
+import NavBar from '../components/NavBar';
+
+export default function EmployeeDashboard() {
+  const employeeId = localStorage.getItem('employeeId');
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Employee Dashboard</h2>
-      <p>Welcome! Track your attendance, apply for leave, and view your payroll here.</p>
+    <div>
+      <NavBar />
+      <div className="container">
+        <h2>Dashboard</h2>
+        <p><b>Employee ID:</b> {employeeId}</p>
+        <ul>
+          <li><b>Profile:</b> view basic info</li>
+          <li><b>Attendance:</b> mark and view day-wise</li>
+          <li><b>Payslips:</b> coming soon (based on attendance)</li>
+          <li><b>Announcements:</b> static demo</li>
+        </ul>
+      </div>
     </div>
   );
-};
-
-export default EmployeeDashboard;
+}

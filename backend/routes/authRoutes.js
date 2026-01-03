@@ -1,20 +1,10 @@
-import express from "express";
-import {
-  createEmployee,
-  signIn,
-  changePassword
-} from "../controllers/authController.js";
-import authMiddleware from "../middleware/authMiddleware.js"; // if you want to protect routes
+import { Router } from 'express';
+import { login, changePassword } from '../controllers/authController.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
-const router = express.Router();
+const router = Router();
 
-// ✅ Only HR/Admin can create employee accounts
-router.post("/create-employee", authMiddleware, createEmployee);
-
-// ✅ Employee login using Employee ID
-router.post("/signin", signIn);
-
-// ✅ First-time password change (after login)
-router.post("/change-password", authMiddleware, changePassword);
+router.post('/login', login);
+router.post('/change-password', requireAuth, changePassword);
 
 export default router;

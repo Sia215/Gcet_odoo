@@ -1,45 +1,86 @@
-import { useState, useEffect } from "react";
-import axios from '../api/axios';
+import { useEffect, useState } from 'react';
+import client from '../api/client';
+import NavBar from '../components/NavBar';
 
-
-const Attendance = () => {
+export default function Attendance() {
   const [records, setRecords] = useState([]);
+  const [msg, setMsg] = useState('');
+  const [form, setForm] = useState({
+    date: new Date().toISOString().slice(0, 10),
+    checkIn: '10:00',
+    checkOut: '19:00',
+    workHours: '09:00',
+    extraHours: '01:00'
+  });
 
-  const checkIn = async () => {
-    await axios.post("/attendance/checkin", { date: new Date(), checkInTime: new Date().toLocaleTimeString() });
-    loadAttendance();
-  };
-
-  const checkOut = async () => {
-    await axios.post("/attendance/checkout", { date: new Date(), checkOutTime: new Date().toLocaleTimeString() });
-    loadAttendance();
-  };
-
-  const loadAttendance = async () => {
-    const res = await axios.get("/attendance");
-    setRecords(res.data);
+  const loadMonth = async () => {
+    setMsg('');
+    const now = new Date();
+    try {
+      const { data } = await client.get('/attendance/mine', {
+        params: { year: now.getFullYear(), month: now.getMonth() + 1 }
+      });
+      setRecords(data);
+    } catch (err) {
+      setMsg(err.response?.data?.message || 'Failed to load');
+    }
   };
 
   useEffect(() => {
-    loadAttendance();
+    loadMonth();
   }, []);
 
+  const submit = async (e) => {
+    e.preventDefault();
+    setMsg('');
+    try {
+      await client.post('/attendance/mark', form);
+      setMsg('Attendance saved');
+      loadMonth();
+    } catch (err) {
+      setMsg(err.response?.data?.message || 'Save failed');
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Attendance</h2>
-      <div className="space-x-4 mb-4">
-        <button onClick={checkIn} className="bg-green-500 text-white px-4 py-2 rounded">Check In</button>
-        <button onClick={checkOut} className="bg-red-500 text-white px-4 py-2 rounded">Check Out</button>
+    <div>
+      <NavBar />
+      <div className="container">
+        <h2>Attendance</h2>
+        <form onSubmit={submit}>
+          <label>Date</label>
+          <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+          <label>Check-in</label>
+          <input value={form.checkIn} onChange={(e) => setForm({ ...form, checkIn: e.target.value })} />
+          <label>Check-out</label>
+          <input value={form.checkOut} onChange={(e) => setForm({ ...form, checkOut: e.target.value })} />
+          <label>Work hours</label>
+          <input value={form.workHours} onChange={(e) => setForm({ ...form, workHours: e.target.value })} />
+          <label>Extra hours</label>
+          <input value={form.extraHours} onChange={(e) => setForm({ ...form, extraHours: e.target.value })} />
+          <button type="submit">Mark attendance</button>
+        </form>
+        {msg && <p>{msg}</p>}
+        <h3>This month</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Check In</th><th>Check Out</th><th>Work</th><th>Extra</th>
+            </tr>
+          </thead>
+          <tbody>
+            {records.map((r) => (
+              <tr key={r._id}>
+                <td>{new Date(r.date).toLocaleDateString()}</td>
+                <td>{r.checkIn}</td>
+                <td>{r.checkOut}</td>
+                <td>{r.workHours}</td>
+                <td>{r.extraHours}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <ul className="space-y-2">
-        {records.map((r, i) => (
-          <li key={i} className="border p-2 rounded">
-            {r.date} — {r.checkInTime} to {r.checkOutTime || "N/A"} ({r.status})
-          </li>
-        ))}
-      </ul>
     </div>
   );
-};
-
-export default Attendance;
+}

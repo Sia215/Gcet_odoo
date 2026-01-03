@@ -1,18 +1,18 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const employeeSchema = new mongoose.Schema({
-  companyName: String,
-  firstName: String,
-  lastName: String,
-  email: { type: String, unique: true },
-  phone: String,
-  logoUrl: String,
-  employeeId: { type: String, unique: true },
-  password: String,
-  role: { type: String, default: "EMPLOYEE" },
-  mustChangePassword: { type: Boolean, default: true },
-  joinYear: Number,
-  serialNo: Number
-}, { timestamps: true });
+const employeeSchema = new mongoose.Schema(
+  {
+    employeeId: { type: String, unique: true, required: true },
+    companyCode: { type: String, required: true }, // e.g., OI
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String },
+    phone: { type: String },
+    yearOfJoining: { type: Number, required: true },
+    serialNo: { type: Number, required: true }, // 1..N per year
+    status: { type: String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' }
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model("Employee", employeeSchema);
+export default mongoose.model('Employee', employeeSchema);

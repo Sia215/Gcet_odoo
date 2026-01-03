@@ -1,44 +1,50 @@
-import Attendance from "../models/Attendance.js";
+import Attendance from '../models/Attendance.js';
 
-export const checkIn = async (req, res) => {
+export const markAttendance = async (req, res) => {
   try {
-    const { date, checkInTime } = req.body;
-    const attendance = new Attendance({
-      employee: req.user.id,
-      date,
-      status: "Present",
-      checkInTime
-    });
-    await attendance.save();
-    res.status(201).json(attendance);
+    const { date, checkIn, checkOut, workHours, extraHours, breaks } = req.body;
+    const employeeId = req.user.employeeId;
+    const d = new Date(date);
+
+    const record = await Attendance.findOneAndUpdate(
+      { employeeId, date: d },
+      { employeeId, date: d, checkIn, checkOut, workHours, extraHours, breaks },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    res.status(200).json({ message: 'Attendance saved', record });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-export const checkOut = async (req, res) => {
+export const getMyAttendanceMonth = async (req, res) => {
   try {
-    const { date, checkOutTime } = req.body;
-    const attendance = await Attendance.findOne({ employee: req.user.id, date });
-    if (!attendance) return res.status(404).json({ message: "Check-in not found" });
+    const employeeId = req.user.employeeId;
+    const { year, month } = req.query; // month: 1-12
+    const start = new Date(Number(year), Number(month) - 1, 1);
+    const end = new Date(Number(year), Number(month), 0, 23, 59, 59);
 
-    attendance.checkOutTime = checkOutTime;
-    const start = new Date(`1970-01-01T${attendance.checkInTime}:00Z`);
-    const end = new Date(`1970-01-01T${checkOutTime}:00Z`);
-    attendance.workingHours = (end - start) / (1000 * 60 * 60);
-    await attendance.save();
+    const records = await Attendance.find({
+      employeeId,
+      date: { $gte: start, $lte: end }
+    }).sort({ date: 1 });
 
-    res.status(200).json(attendance);
+    res.json(records);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-export const getAttendance = async (req, res) => {
+export const getTodayAttendanceForAdmins = async (_req, res) => {
   try {
-    const records = await Attendance.find({ employee: req.user.id });
-    res.status(200).json(records);
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+
+    const records = await Attendance.find({ date: { $gte: start, $lte: end } }).sort({ employeeId: 1 });
+    res.json(records);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

@@ -1,21 +1,38 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import ChangePassword from "./pages/ChangePassword";
-import RegisterUser from "./pages/Register_user";
-import Dashboard from "./pages/EmployeeDashbrd";
-import ProtectedRoute from "./pages/ProtectedRoute";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import FirstLoginChangePassword from './pages/FirstLoginChangePassword';
+import AdminCreateEmployee from './pages/AdminCreateEmployee';
+import EmployeeDashboard from './pages/EmployeeDashboard';
+import Attendance from './pages/Attendance';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
-        <Route path="/register" element={<ProtectedRoute><RegisterUser /></ProtectedRoute>} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/first-change" element={
+          <ProtectedRoute mustChangeAllowed={true}>
+            <FirstLoginChangePassword />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/create" element={
+          <ProtectedRoute>
+            <AdminCreateEmployee />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <EmployeeDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/attendance" element={
+          <ProtectedRoute>
+            <Attendance />
+          </ProtectedRoute>
+        } />
+        <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;

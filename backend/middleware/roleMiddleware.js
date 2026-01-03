@@ -1,7 +1,8 @@
-export const roleMiddleware = (role) => {
+export const requireRole = (...roles) => {
   return (req, res, next) => {
-    if (req.user.role !== role) {
-      return res.status(403).json({ message: "Access denied" });
+    const role = req.user?.role;
+    if (!role || !roles.includes(role)) {
+      return res.status(403).json({ message: 'Forbidden' });
     }
     next();
   };
