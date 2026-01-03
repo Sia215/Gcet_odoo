@@ -1,4 +1,4 @@
-const attendanceSchema =require("../models/Attendance")
+import Attendance from "../models/Attendance.js";
 
 export const checkIn = async (req, res) => {
   try {
