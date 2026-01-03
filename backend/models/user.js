@@ -4,8 +4,8 @@ const userSchema = new mongoose.Schema(
   {
     employeeId: {
       type: String,
-      required: true,
-      unique: true
+      unique: true,
+      index: true // Optional: improves lookup performance
     },
 
     name: {
@@ -16,7 +16,9 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      index: true,
+      match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"]
     },
 
     password: {

@@ -1,16 +1,23 @@
 import express from "express";
-import { checkIn, checkOut, getAttendance } from "../controllers/attendanceController.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import Attendance from "../models/Attendance.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 
-// Employee check-in
-router.post("/checkin", authMiddleware, checkIn);
+// Get logged-in employee's attendance
+router.get("/me", authMiddleware, async (req, res) => {
+  const records = await Attendance.find({ employeeId: req.user.employeeId });
+  res.json(records);
+});
 
-// Employee check-out
-router.post("/checkout", authMiddleware, checkOut);
+// Admin: Get today's attendance
+router.get("/today", authMiddleware, async (req, res) => {
+  if (req.user.role !== "ADMIN") return res.status(403).json({ message: "Access denied" });
 
-// Get attendance records
-router.get("/", authMiddleware, getAttendance);
+  const today = new Date().toISOString().slice(0, 10);
+  const records = await Attendance.find({ date: { $regex: today } });
+  res.json(records);
+});
 
 export default router;
