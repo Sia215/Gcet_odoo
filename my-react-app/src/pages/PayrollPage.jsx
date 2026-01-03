@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import api from "../api";
+import "./PayrollPage.css";
 
 function PayrollPage({ user, onLogout }) {
   const [payroll, setPayroll] = useState(null);
@@ -11,16 +12,29 @@ function PayrollPage({ user, onLogout }) {
 
   return (
     <Layout user={user} onLogout={onLogout} title="Payroll">
-      <div className="card max-w-md">
-        {payroll ? (
-          <>
-            <p className="mb-2 text-sm">Month: {payroll.month}</p>
-            <p className="mb-2 text-sm">Basic: ₹{payroll.basic}</p>
-            <p className="mb-2 text-sm">Net: ₹{payroll.net}</p>
-          </>
-        ) : (
-          <p className="text-sm">Loading payroll info...</p>
-        )}
+      <div className="pay-root">
+        <div className="pay-container">
+          <div className="pay-card">
+            {payroll ? (
+              <>
+                <div className="pay-row">
+                  <span className="pay-label">Month</span>
+                  <span className="pay-value">{payroll.month}</span>
+                </div>
+                <div className="pay-row">
+                  <span className="pay-label">Basic</span>
+                  <span className="pay-value">₹{payroll.basic}</span>
+                </div>
+                <div className="pay-row">
+                  <span className="pay-label">Net</span>
+                  <span className="pay-value">₹{payroll.net}</span>
+                </div>
+              </>
+            ) : (
+              <p>Loading payroll info...</p>
+            )}
+          </div>
+        </div>
       </div>
     </Layout>
   );

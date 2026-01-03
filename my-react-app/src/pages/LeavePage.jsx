@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import api from "../api";
+import "./LeavePage.css";
 
 function LeavePage({ user, onLogout }) {
   const [list, setList] = useState([]);
@@ -32,83 +33,88 @@ function LeavePage({ user, onLogout }) {
 
   return (
     <Layout user={user} onLogout={onLogout} title="Leave / Time Off">
-      <div className="grid gap-4 md:grid-cols-2">
-        <form className="card space-y-3" onSubmit={submit}>
-          <h2 className="font-semibold">Apply for Leave</h2>
-          <div>
-            <label className="block text-sm mb-1">Leave type</label>
-            <select
-              name="type"
-              value={form.type}
-              onChange={change}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option>Paid</option>
-              <option>Sick</option>
-              <option>Unpaid</option>
-            </select>
-          </div>
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="block text-sm mb-1">From</label>
-              <input
-                type="date"
-                name="from"
-                value={form.from}
-                onChange={change}
-                className="w-full border rounded px-3 py-2"
-                required
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm mb-1">To</label>
-              <input
-                type="date"
-                name="to"
-                value={form.to}
-                onChange={change}
-                className="w-full border rounded px-3 py-2"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Remarks</label>
-            <textarea
-              name="remarks"
-              value={form.remarks}
-              onChange={change}
-              className="w-full border rounded px-3 py-2"
-              rows={3}
-            />
-          </div>
-          <button className="btn w-full" type="submit">
-            Submit Leave
-          </button>
-        </form>
+      <div className="leave-root">
+        <div className="leave-container">
+          {/* Apply for leave */}
+          <div className="leave-card">
+            <h2>Apply for Leave</h2>
+            <form className="leave-form" onSubmit={submit}>
+              <div className="leave-group">
+                <label>Leave type</label>
+                <select
+                  name="type"
+                  value={form.type}
+                  onChange={change}
+                >
+                  <option>Paid</option>
+                  <option>Sick</option>
+                  <option>Unpaid</option>
+                </select>
+              </div>
 
-        <div className="card overflow-x-auto">
-          <h2 className="font-semibold mb-2">My Leave Requests</h2>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2 text-left">Type</th>
-                <th className="py-2 text-left">From</th>
-                <th className="py-2 text-left">To</th>
-                <th className="py-2 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.map((l) => (
-                <tr key={l.id} className="border-b">
-                  <td className="py-1">{l.type}</td>
-                  <td className="py-1">{l.from}</td>
-                  <td className="py-1">{l.to}</td>
-                  <td className="py-1">{l.status}</td>
+              <div className="leave-dates">
+                <div className="leave-group">
+                  <label>From</label>
+                  <input
+                    type="date"
+                    name="from"
+                    value={form.from}
+                    onChange={change}
+                    required
+                  />
+                </div>
+                <div className="leave-group">
+                  <label>To</label>
+                  <input
+                    type="date"
+                    name="to"
+                    value={form.to}
+                    onChange={change}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="leave-group">
+                <label>Remarks</label>
+                <textarea
+                  name="remarks"
+                  value={form.remarks}
+                  onChange={change}
+                  rows={3}
+                />
+              </div>
+
+              <button className="leave-submit" type="submit">
+                Submit Leave
+              </button>
+            </form>
+          </div>
+
+          {/* My leave requests */}
+          <div className="leave-card">
+            <h2>My Leave Requests</h2>
+            <table className="leave-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {list.map((l) => (
+                  <tr key={l.id}>
+                    <td>{l.type}</td>
+                    <td>{l.from}</td>
+                    <td>{l.to}</td>
+                    <td>{l.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Layout>
