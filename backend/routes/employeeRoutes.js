@@ -1,12 +1,20 @@
-import { Router } from 'express';
-import { createEmployee, listEmployees } from '../controllers/employeeController.js';
-import { requireAuth } from '../middleware/authMiddleware.js';
-import { requireRole } from '../middleware/roleMiddleware.js';
+const express = require("express");
+const router = express.Router();
+const employeeController = require("../controllers/employeeController");
+const { protect, allowRoles } = require("../middleware/authMiddleware");
 
-const router = Router();
+router.get(
+  "/",
+  protect,
+  allowRoles("ADMIN"),
+  employeeController.getEmployees
+);
 
-// Only HR or ADMIN can create/list employees
-router.post('/', requireAuth, requireRole('HR', 'ADMIN'), createEmployee);
-router.get('/', requireAuth, requireRole('HR', 'ADMIN'), listEmployees);
+router.post(
+  "/",
+  protect,
+  allowRoles("ADMIN"),
+  employeeController.createEmployee
+);
 
-export default router;
+module.exports = router;

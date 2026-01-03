@@ -1,18 +1,17 @@
-import express from "express";
-import { getMyPayroll, getAllPayrolls, createOrUpdatePayroll } from "../controllers/payrollController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
-
-import { roleMiddleware } from "../middleware/roleMiddleware.js";
-
+const express = require("express");
 const router = express.Router();
+const payrollController = require("../controllers/payrollController");
+const { protect, allowRoles } = require("../middleware/authMiddleware");
 
-// Employee views own payroll
-router.get("/me", authMiddleware, getMyPayroll);
+// employee
+router.get("/me", protect, payrollController.getMyPayroll);
 
-// Admin views all payrolls
-router.get("/", authMiddleware, roleMiddleware("ADMIN"), getAllPayrolls);
+// admin
+router.get(
+  "/",
+  protect,
+  allowRoles("ADMIN"),
+  payrollController.getAllPayroll
+);
 
-// Admin creates/updates payroll
-router.post("/", authMiddleware, roleMiddleware("ADMIN"), createOrUpdatePayroll);
-
-export default router;
+module.exports = router;

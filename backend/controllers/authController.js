@@ -1,49 +1,54 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
-export const login = async (req, res) => {
+const genToken = (user) =>
+  jwt.sign(
+    { id: user._id, role: user.role, employeeId: user.employeeId },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+exports.signup = async (req, res) => {
   try {
-    const { employeeId, password } = req.body;
-    const user = await User.findOne({ employeeId, active: true });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    const { employeeId, email, password, role } = req.body;
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) return res.status(400).json({ message: 'Invalid credentials' });
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: "User already exists" });
 
-    const token = jwt.sign(
-      { sub: user._id, employeeId: user.employeeId, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '8h' }
-    );
+    const hashed = await bcrypt.hash(password, 10);
 
-    res.json({
-      token,
-      mustChangePassword: user.mustChangePassword,
-      role: user.role,
-      employeeId: user.employeeId
+    const user = await User.create({
+      employeeId,
+      email,
+      password: hashed,
+      role
+    });
+
+    return res.status(201).json({
+      token: genToken(user),
+      user: { id: user._id, email: user.email, role: user.role }
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: err.message });
   }
 };
 
-export const changePassword = async (req, res) => {
+exports.signin = async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
-    const user = await User.findById(req.user.sub);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    const { email, password } = req.body;
 
-    const ok = await bcrypt.compare(oldPassword, user.passwordHash);
-    if (!ok) return res.status(400).json({ message: 'Old password incorrect' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    const hash = await bcrypt.hash(newPassword, 10);
-    user.passwordHash = hash;
-    user.mustChangePassword = false;
-    await user.save();
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(400).json({ message: "Invalid credentials" });
 
-    res.json({ message: 'Password changed' });
+    return res.json({
+      token: genToken(user),
+      user: { id: user._id, email: user.email, role: user.role }
+    });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: err.message });
   }
 };

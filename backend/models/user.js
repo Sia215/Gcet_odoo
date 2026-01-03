@@ -1,16 +1,13 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    employeeId: { type: String, unique: true, required: true }, // e.g., OIDODO20240001
-    email: { type: String, unique: true, sparse: true },
-    phone: { type: String, unique: true, sparse: true },
-    passwordHash: { type: String, required: true },
-    role: { type: String, enum: ['EMPLOYEE', 'HR', 'ADMIN'], default: 'EMPLOYEE' },
-    mustChangePassword: { type: Boolean, default: true },
-    active: { type: Boolean, default: true }
+    employeeId: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["EMPLOYEE", "ADMIN"], default: "EMPLOYEE" }
   },
   { timestamps: true }
 );
 
-export default mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

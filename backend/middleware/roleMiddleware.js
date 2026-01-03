@@ -1,9 +1,7 @@
-export const requireRole = (...roles) => {
+export const allowRoles = (...roles) => {
   return (req, res, next) => {
-    const role = req.user?.role;
-    if (!role || !roles.includes(role)) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
+    if (!roles.includes(req.user.role))
+      return res.status(403).json({ message: "Access denied" });
     next();
   };
 };

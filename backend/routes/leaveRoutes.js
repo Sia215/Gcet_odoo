@@ -1,18 +1,30 @@
-import express from "express";
-import { applyLeave, getMyLeaves, approveLeave } from "../controllers/leaveController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
-
-import { roleMiddleware } from "../middleware/roleMiddleware.js";
-
+const express = require("express");
 const router = express.Router();
+const leaveController = require("../controllers/leaveController");
+const { protect, allowRoles } = require("../middleware/authMiddleware");
 
-// Employee applies for leave
-router.post("/", authMiddleware, applyLeave);
+// employee
+router.post("/", protect, leaveController.applyLeave);
+router.get("/me", protect, leaveController.getMyLeaves);
 
-// Employee views own leaves
-router.get("/", authMiddleware, getMyLeaves);
+// admin
+router.get(
+  "/",
+  protect,
+  allowRoles("ADMIN"),
+  leaveController.getAllLeaves
+);
+router.patch(
+  "/:id/approve",
+  protect,
+  allowRoles("ADMIN"),
+  leaveController.approveLeave
+);
+router.patch(
+  "/:id/reject",
+  protect,
+  allowRoles("ADMIN"),
+  leaveController.rejectLeave
+);
 
-// Admin approves/rejects leave
-router.put("/:id", authMiddleware, roleMiddleware("ADMIN"), approveLeave);
-
-export default router;
+module.exports = router;

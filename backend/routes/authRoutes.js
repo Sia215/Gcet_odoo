@@ -1,10 +1,11 @@
-import { Router } from 'express';
-import { login, changePassword } from '../controllers/authController.js';
-import { requireAuth } from '../middleware/authMiddleware.js';
+const express = require("express");
+const router = express.Router();
+const authController = require("../controllers/authController");
 
-const router = Router();
+router.post("/signup", authController.signup);
+router.post("/signin", authController.signin);
 
-router.post('/login', login);
-router.post('/change-password', requireAuth, changePassword);
+// simple ping for frontend
+router.get("/ping", (req, res) => res.json({ ok: true }));
 
-export default router;
+module.exports = router;
