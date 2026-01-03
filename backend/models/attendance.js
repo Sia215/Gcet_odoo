@@ -34,4 +34,4 @@ const attendanceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Attendance", attendanceSchema);
+export default mongoose.model("attendance", attendanceSchema);
